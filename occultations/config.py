@@ -15,6 +15,15 @@ class SiteConfig:
     timezone: str
 
 
+DEFAULT_SITE = SiteConfig(
+    name="Observatori de Sabadell",
+    lat=41.550111,
+    lon=2.091453,
+    alt_m=224,
+    timezone="Europe/Madrid",
+)
+
+
 @dataclass(slots=True)
 class OccultationEvent:
     object_name: str | None = None

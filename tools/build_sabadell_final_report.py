@@ -14,12 +14,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--week-json", required=True)
     parser.add_argument("--horizon-json", required=True)
     parser.add_argument("--lunar-json")
+    parser.add_argument("--lunar-external-json")
     parser.add_argument("--out", required=True)
     parser.add_argument("--previous")
     return parser.parse_args()
 
 
-def build(week: dict, horizon: dict, lunar: dict | None = None, previous: dict | None = None) -> str:
+def build(
+    week: dict,
+    horizon: dict,
+    lunar: dict | None = None,
+    previous: dict | None = None,
+    lunar_external: dict | None = None,
+) -> str:
     events = sorted(week["events"], key=lambda event: (-event["score_total"], event["local_datetime"]))
     horizon_events = sorted(horizon["events"], key=lambda event: event["local_datetime"])
     special_types = {"tno", "centaur", "cubewano", "dwarf_planet", "special"}
@@ -130,6 +137,8 @@ def build(week: dict, horizon: dict, lunar: dict | None = None, previous: dict |
         lines.append("Comparacion pendiente de revision editorial.")
     lines += ["", "## Ocultaciones lunares", ""]
     lines.extend(_lunar_section(lunar))
+    lines += ["", "## Ocultaciones lunares - fuente externa", ""]
+    lines.extend(_lunar_external_section(lunar_external))
     return "\n".join(lines) + "\n"
 
 
@@ -198,15 +207,34 @@ def _lunar_section(lunar: dict | None) -> list[str]:
     return lines
 
 
+def _lunar_external_section(lunar_external: dict | None) -> list[str]:
+    if lunar_external is None:
+        return ["Sin capa externa lunar adjunta en este informe.", ""]
+    event = lunar_external.get("event") or {}
+    return [
+        f"- Evento externo confirmado: {event.get('name') or 'ocultacion lunar brillante (pendiente de detalle)'}",
+        f"- Fuente fiable: {lunar_external.get('source_name') or 'n/i'}",
+        f"- Enlace fuente: {lunar_external.get('source_url') or 'n/i'}",
+        f"- Estado en pipeline lunar local: {lunar_external.get('pipeline_status') or 'no detectado por cobertura/catalogo'}",
+        "- Fiabilidad fuente externa lunar: alta (existencia del evento).",
+        "- Tiempos exactos para Sabadell: pendientes de predictor topocentrico.",
+        "- Fiabilidad pipeline lunar local: baja hasta calcular esta ocultacion con catalogo/cobertura adecuados.",
+        "- Clasificacion operativa: evento principal practico de la noche.",
+        "- Asteroidales: secundarios de seguimiento/practica pending_geometry.",
+        "",
+    ]
+
+
 def main() -> int:
     args = parse_args()
     week = json.loads(Path(args.week_json).read_text(encoding="utf-8"))
     horizon = json.loads(Path(args.horizon_json).read_text(encoding="utf-8"))
     lunar = json.loads(Path(args.lunar_json).read_text(encoding="utf-8")) if args.lunar_json else None
+    lunar_external = json.loads(Path(args.lunar_external_json).read_text(encoding="utf-8")) if args.lunar_external_json else None
     previous = json.loads(Path(args.previous).read_text(encoding="utf-8")) if args.previous else None
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(build(week, horizon, lunar, previous), encoding="utf-8")
+    out.write_text(build(week, horizon, lunar, previous, lunar_external), encoding="utf-8")
     print(out)
     return 0
 

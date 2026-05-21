@@ -14,6 +14,8 @@ from astropy.time import Time
 
 MOON_RADIUS_KM = 1737.4
 CALCULATION_NAME = "astropy_builtin_topocentric_moon_vs_gaia_dr3"
+MAX_LUNAR_EVENT_DURATION_MIN = 120
+MIN_OPERATIONAL_MOON_ALT_DEG = 5.0
 CALCULATION_LIMITATIONS = [
     "Uses Gaia DR3 corridor candidates and Astropy's built-in solar-system ephemeris.",
     "Uses a spherical lunar limb; mountains, valleys, Besselian limb corrections, double stars and timing-grade reductions are not modeled.",
@@ -57,7 +59,7 @@ def moon_corridor(start: datetime, end: datetime, location: EarthLocation) -> di
         dec=float(sum(moons.dec.deg) / len(moons)) * u.deg,
         frame="icrs",
     )
-    radius = max(float(center.separation(moon).deg) for moon in moons) + 0.8
+    radius = max(float(center.separation(moon).deg) for moon in moons) + 1.5
     return {"ra_deg": float(center.ra.deg), "dec_deg": float(center.dec.deg), "radius_deg": radius}
 
 
@@ -95,6 +97,7 @@ def detect_lunar_occultations(
                 )
                 event = _event_payload(
                     candidate,
+                    star,
                     event_time,
                     location,
                     timezone_name,
@@ -104,8 +107,48 @@ def detect_lunar_occultations(
                 if event["moon_altitude_deg"] is not None and event["moon_altitude_deg"] > 0:
                     events.append(event)
     events.sort(key=lambda event: event["utc_datetime"])
+    events = _annotate_and_filter_events(events)
     return events
 
+
+
+
+def _annotate_and_filter_events(events: list[dict]) -> list[dict]:
+    by_star: dict[str, list[dict]] = {}
+    for event in events:
+        by_star.setdefault(event["star_source_id"], []).append(event)
+
+    filtered: list[dict] = []
+    for star_events in by_star.values():
+        star_events.sort(key=lambda item: item["utc_datetime"])
+        pending_disappearance: dict | None = None
+        for event in star_events:
+            event["implicit_duration_min"] = None
+            if event.get("moon_altitude_deg") is not None and event["moon_altitude_deg"] < MIN_OPERATIONAL_MOON_ALT_DEG:
+                event.setdefault("risks", []).append("Moon altitude < 5 deg (non-operational)")
+                continue
+            if event["event_type"] == "disappearance":
+                pending_disappearance = event
+                filtered.append(event)
+                continue
+            if event["event_type"] == "reappearance" and pending_disappearance is not None:
+                dt0 = datetime.fromisoformat(pending_disappearance["utc_datetime"])
+                dt1 = datetime.fromisoformat(event["utc_datetime"])
+                duration_min = (dt1 - dt0).total_seconds() / 60.0
+                pending_disappearance["implicit_duration_min"] = duration_min
+                event["implicit_duration_min"] = duration_min
+                if duration_min > MAX_LUNAR_EVENT_DURATION_MIN:
+                    pending_disappearance.setdefault("risks", []).append("Rejected: implicit D/R duration > 120 min")
+                    event.setdefault("risks", []).append("Rejected: implicit D/R duration > 120 min")
+                    filtered = [e for e in filtered if e is not pending_disappearance]
+                    pending_disappearance = None
+                    continue
+                filtered.append(event)
+                pending_disappearance = None
+                continue
+            filtered.append(event)
+    filtered.sort(key=lambda item: item["utc_datetime"])
+    return filtered
 
 def score_lunar_event(event: dict) -> tuple[int, list[str], list[str]]:
     score = 2
@@ -135,6 +178,8 @@ def score_lunar_event(event: dict) -> tuple[int, list[str], list[str]]:
             reasons.append("Moon altitude moderate")
         else:
             risks.append("Moon low")
+            if altitude < MIN_OPERATIONAL_MOON_ALT_DEG:
+                risks.append("Non-operational altitude (<5 deg)")
     if phase is not None:
         if phase >= 0.85:
             score -= 1
@@ -194,6 +239,11 @@ def write_lunar_reports(payload: dict, out_base: Path) -> tuple[Path, Path]:
                 f"- Altura lunar: {_fmt(event.get('moon_altitude_deg'))}",
                 f"- Fase lunar iluminada: {_fmt(event.get('moon_illuminated_fraction'))}",
                 f"- Elongacion solar: {_fmt(event.get('solar_elongation_deg'))}",
+                f"- Separacion minima: {_fmt(event.get('min_separation_arcsec'))} arcsec",
+                f"- Radio lunar angular: {_fmt(event.get('moon_radius_arcsec'))} arcsec",
+                f"- Margen (sep-radio): {_fmt(event.get('occultation_margin_arcsec'))} arcsec",
+                f"- Instante minimo acercamiento UTC: {event.get('closest_approach_utc') or 'n/i'}",
+                f"- Duracion implicita D/R: {_fmt(event.get('implicit_duration_min'))} min",
                 f"- Limbo: {event.get('limb') or 'n/i'}",
                 "- Valor cientifico: practica/timing lunar salvo caso especial no clasificado",
                 f"- Utilidad practica: {event.get('utility')}",
@@ -209,6 +259,7 @@ def write_lunar_reports(payload: dict, out_base: Path) -> tuple[Path, Path]:
 
 def _event_payload(
     candidate: LunarCandidate,
+    star: SkyCoord,
     event_time: datetime,
     location: EarthLocation,
     timezone_name: str,
@@ -221,6 +272,9 @@ def _event_payload(
     moon_altaz = moon.transform_to(AltAz(obstime=t, location=location))
     elongation = float(moon.separation(sun).deg)
     phase = (1 - math.cos(math.radians(elongation))) / 2
+    min_sep_arcsec = abs(float(star.separation(moon).deg)) * 3600
+    moon_radius_arcsec = float(_moon_radius_deg(moon)) * 3600
+    margin_arcsec = min_sep_arcsec - moon_radius_arcsec
     payload = {
         "occulting_object": "Moon",
         "star_name": f"Gaia DR3 {candidate.source_id}",
@@ -235,6 +289,10 @@ def _event_payload(
         "solar_elongation_deg": elongation,
         "limb": None,
         "source": "gaia_dr3_tap",
+        "min_separation_arcsec": min_sep_arcsec,
+        "moon_radius_arcsec": moon_radius_arcsec,
+        "occultation_margin_arcsec": margin_arcsec,
+        "closest_approach_utc": event_time.astimezone(timezone.utc).isoformat(),
         "source_file": source_file,
         "calculation": CALCULATION_NAME,
         "scientific_value": "practice_timing",

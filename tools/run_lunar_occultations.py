@@ -19,7 +19,6 @@ from occultations.lunar import (
     load_gaia_candidates,
     write_lunar_reports,
     candidate_diagnostics,
-    detect_lunar_occultations_with_metrics,
 )
 from occultations.settings import load_site_settings
 REQUIRED_LOCAL_COLUMNS = {"star_name","catalog","source_id","ra_deg","dec_deg","pmra","pmdec","epoch","mag_v","mag_g"}
@@ -55,8 +54,7 @@ def main() -> int:
     end = datetime.fromisoformat(args.to_dt).astimezone(tz)
     catalog_validation = validate_local_catalog(Path(args.input), start, end, lat, lon, alt)
     candidates = load_gaia_candidates(Path(args.input))
-    detection = detect_lunar_occultations_with_metrics(candidates, start, end, lat, lon, alt, timezone_name, str(args.input))
-    events = detection["events"]
+    events = detect_lunar_occultations(candidates, start, end, lat, lon, alt, timezone_name, str(args.input))
     diagnostics = candidate_diagnostics(candidates, start, end, lat, lon, alt, timezone_name, top_n=30)
     payload = {
         "site": {"name": name, "lat": lat, "lon": lon, "alt_m": alt, "timezone": timezone_name},
@@ -74,13 +72,12 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "summary": {"candidate_stars": len(candidates), "visible_events": len(events)},
         "catalog_validation": catalog_validation,
-        "runtime_metrics": detection["metrics"],
         "events": events,
         "candidate_diagnostics": diagnostics,
         "limitations": CALCULATION_LIMITATIONS,
     }
     write_lunar_reports(payload, Path(args.out))
-    print(json.dumps({"candidate_stars": len(candidates), "visible_events": len(events), "out": args.out, "coverage": catalog_validation, "runtime_metrics": detection["metrics"]}, ensure_ascii=False, indent=2))
+    print(json.dumps({"candidate_stars": len(candidates), "visible_events": len(events), "out": args.out, "coverage": catalog_validation}, ensure_ascii=False, indent=2))
     return 0
 
 

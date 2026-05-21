@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 import math
-import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -66,60 +65,20 @@ def moon_corridor(start: datetime, end: datetime, location: EarthLocation) -> di
 
 
 def detect_lunar_occultations(candidates: Iterable[LunarCandidate], start: datetime, end: datetime, lat: float, lon: float, alt_m: float, timezone_name: str, source_file: str, step_seconds: int = 10) -> list[dict]:
-    result = detect_lunar_occultations_with_metrics(candidates, start, end, lat, lon, alt_m, timezone_name, source_file, step_seconds)
-    return result["events"]
-
-
-def detect_lunar_occultations_with_metrics(
-    candidates: Iterable[LunarCandidate],
-    start: datetime,
-    end: datetime,
-    lat: float,
-    lon: float,
-    alt_m: float,
-    timezone_name: str,
-    source_file: str,
-    step_seconds: int = 20,
-) -> dict:
-    t0 = time.perf_counter()
     location = EarthLocation(lat=lat * u.deg, lon=lon * u.deg, height=alt_m * u.m)
-    all_candidates = list(candidates)
-    corridor = moon_corridor(start, end, location)
-    coarse_times = _times(start, end, timedelta(minutes=3))
-    coarse_moon = get_body("moon", Time(coarse_times), location).icrs
-    coarse_ra = list(coarse_moon.ra.deg)
-    coarse_dec = list(coarse_moon.dec.deg)
-    box_margin = 2.0
-    filtered = []
-    for c in all_candidates:
-        if c.v_mag is not None and c.v_mag > 11:
-            continue
-        if abs(c.dec_deg - corridor["dec_deg"]) > corridor["radius_deg"] + box_margin or _ra_delta_deg(c.ra_deg, corridor["ra_deg"]) > corridor["radius_deg"] + box_margin:
-            continue
-        if _min_sep_from_track_deg(c.ra_deg, c.dec_deg, coarse_ra, coarse_dec) > 1.8:
-            continue
-        filtered.append(c)
     events: list[dict] = []
-    refined = 0
-    for candidate in filtered:
-        candidate_events, needs_refine = _candidate_events(candidate, start, end, location, timezone_name, source_file, step_seconds)
-        if needs_refine:
-            refined += 1
-        events.extend(candidate_events)
+    for candidate in candidates:
+        events.extend(_candidate_events(candidate, start, end, location, timezone_name, source_file, step_seconds))
     events.sort(key=lambda event: event["utc_datetime"])
-    events = _annotate_and_filter_events(events)
-    elapsed = time.perf_counter() - t0
-    return {
-        "events": events,
-        "metrics": {
-            "stars_initial": len(all_candidates),
-            "stars_after_bounding_box": len(filtered),
-            "stars_refined": refined,
-            "time_total_s": elapsed,
-            "corridor": corridor,
-        },
-    }
+    return _annotate_and_filter_events(events)
 
+def candidate_diagnostics(candidates: Iterable[LunarCandidate], start: datetime, end: datetime, lat: float, lon: float, alt_m: float, timezone_name: str, top_n: int = 20) -> list[dict]:
+    location = EarthLocation(lat=lat * u.deg, lon=lon * u.deg, height=alt_m * u.m)
+    rows = []
+    for c in candidates:
+        rows.append(_candidate_minimum(c, start, end, location, timezone_name))
+    rows.sort(key=lambda x: x["margin_arcsec"])
+    return rows[:top_n]
 
 def candidate_diagnostics(candidates: Iterable[LunarCandidate], start: datetime, end: datetime, lat: float, lon: float, alt_m: float, timezone_name: str, top_n: int = 20) -> list[dict]:
     location = EarthLocation(lat=lat * u.deg, lon=lon * u.deg, height=alt_m * u.m)
@@ -138,17 +97,14 @@ def _candidate_events(candidate, start, end, location, timezone_name, source_fil
     moon_grid = get_body("moon", tgrid, location)
     moon_radius_grid = _moon_radius_deg(moon_grid)
     signed = star.separation(moon_grid).deg - moon_radius_grid
-    out=[]; refined=False
-    min_margin_arcsec = min(float(v) for v in signed) * 3600
-    near_limb = min_margin_arcsec < 300
+    out=[]
     for i in range(len(signed)-1):
         b=float(signed[i]); a=float(signed[i+1])
         if b==0 or a==0 or b*a<0:
-            refined = True
             et=_refine_crossing(star,times[i],times[i+1],b,a,location)
             etype="disappearance" if b>0>=a else "reappearance"
             out.append(_event_payload(candidate, star, et, location, timezone_name, source_file, etype))
-    return out, (refined or near_limb)
+    return out
 
 def _candidate_minimum(candidate,start,end,location,timezone_name):
     times=_times(start,end,timedelta(seconds=30)); tgrid=Time(times)
@@ -269,23 +225,3 @@ def _optional_float(value):
 def _circular_mean(values):
     radians=[math.radians(v) for v in values]; s=sum(math.sin(v) for v in radians); c=sum(math.cos(v) for v in radians)
     return math.degrees(math.atan2(s,c))%360
-
-
-def _ra_delta_deg(a: float, b: float) -> float:
-    d = abs((a - b) % 360.0)
-    return min(d, 360.0 - d)
-
-
-def _min_sep_from_track_deg(ra: float, dec: float, track_ra: list[float], track_dec: list[float]) -> float:
-    best = 999.0
-    for r, d in zip(track_ra, track_dec):
-        sep = _ang_sep_deg(ra, dec, r, d)
-        if sep < best:
-            best = sep
-    return best
-
-
-def _ang_sep_deg(ra1: float, dec1: float, ra2: float, dec2: float) -> float:
-    r1, d1, r2, d2 = map(math.radians, [ra1, dec1, ra2, dec2])
-    cossep = math.sin(d1) * math.sin(d2) + math.cos(d1) * math.cos(d2) * math.cos(r1 - r2)
-    return math.degrees(math.acos(max(-1.0, min(1.0, cossep))))

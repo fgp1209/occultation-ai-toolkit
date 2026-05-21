@@ -113,3 +113,25 @@ Carpetas y settings locales ignorados: `data/raw/`, `data/cache/`, `reports/`, `
 - El parser XML conserva los campos raw no mapeados en `extra`; no asigna duracion maxima o incertidumbre desde slots Preston no documentados.
 - La duracion maxima de una fuente no equivale a duracion local.
 - El calculo lunar actual usa Gaia DR3, la efemeride builtin de Astropy y un limbo lunar esferico; sirve para descubrimiento local y practica/timing, no sustituye una reduccion lunar de precision con perfil de limbo.
+
+## Regla operativa para eventos futuros (doble validacion obligatoria)
+
+Para cualquier solicitud de eventos futuros por ubicacion+ventana temporal:
+
+1. **Validacion interna (pipeline local)**:
+   - ejecutar/regenrar normalizado asteroidal si hace falta;
+   - ejecutar `occultations/run.py` para asteroides;
+   - ejecutar `tools/run_lunar_occultations.py` para lunares con catalogo local validado;
+   - separar salidas: lunar / asteroidal / practica / descartes / pendientes.
+
+2. **Validacion externa independiente (web)**:
+   - contrastar con fuentes astronomicas fiables (IOTA, Call4Obs, Preston, Lucky Star, etc.);
+   - registrar enlaces usados y alcance (local/regional/global);
+   - detectar divergencias entre pipeline y fuentes publicadas.
+
+3. **Matriz obligatoria en informe final**:
+   - `Evento | Fuente externa | Pipeline local | Diagnostico | Fiabilidad`
+
+4. **Cierre**:
+   - no cerrar como “OK” si una fuente externa fiable publica un evento relevante que el pipeline no detecta;
+   - diagnosticar causa (catalogo, parser, geometria, zona horaria, topocentria, cobertura raw/fuentes).

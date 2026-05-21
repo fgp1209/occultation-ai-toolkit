@@ -72,6 +72,13 @@ def detect_lunar_occultations(candidates: Iterable[LunarCandidate], start: datet
     events.sort(key=lambda event: event["utc_datetime"])
     return _annotate_and_filter_events(events)
 
+def candidate_diagnostics(candidates: Iterable[LunarCandidate], start: datetime, end: datetime, lat: float, lon: float, alt_m: float, timezone_name: str, top_n: int = 20) -> list[dict]:
+    location = EarthLocation(lat=lat * u.deg, lon=lon * u.deg, height=alt_m * u.m)
+    rows = []
+    for c in candidates:
+        rows.append(_candidate_minimum(c, start, end, location, timezone_name))
+    rows.sort(key=lambda x: x["margin_arcsec"])
+    return rows[:top_n]
 
 def candidate_diagnostics(candidates: Iterable[LunarCandidate], start: datetime, end: datetime, lat: float, lon: float, alt_m: float, timezone_name: str, top_n: int = 20) -> list[dict]:
     location = EarthLocation(lat=lat * u.deg, lon=lon * u.deg, height=alt_m * u.m)

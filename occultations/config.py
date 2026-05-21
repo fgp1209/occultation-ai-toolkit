@@ -35,7 +35,10 @@ class OccultationEvent:
     mag_drop: float | None = None
     ra: str | None = None
     dec: str | None = None
+    source: str | None = None
+    source_url: str | None = None
     source_file: str | None = None
+    raw_id: str | None = None
     raw_line: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 

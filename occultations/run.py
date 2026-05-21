@@ -30,9 +30,17 @@ def main() -> int:
         raise SystemExit("No hay fuentes para procesar. Usa --input o coloca ficheros en data/raw/.")
 
     events, discarded = [], []
+    window_events = 0
     for src in sources:
         for e in parse_events(src):
             if not e.utc_datetime:
+                continue
+            if e.utc_datetime < cfg.from_dt.astimezone(timezone.utc) or e.utc_datetime > cfg.to_dt.astimezone(timezone.utc):
+                discarded.append({"event": e.object_name, "reason": "Fuera de ventana temporal"})
+                continue
+            window_events += 1
+            if e.star_mag is not None and e.star_mag > cfg.max_mag:
+                discarded.append({"event": e.object_name, "reason": "Estrella demasiado debil"})
                 continue
             d = asdict(e)
             d.update(compute_observables(e.utc_datetime, cfg.site.lat, cfg.site.lon, cfg.site.alt_m, e.ra, e.dec))
@@ -54,7 +62,7 @@ def main() -> int:
         "window": {"from_local": cfg.from_dt.isoformat(), "to_local": cfg.to_dt.isoformat(), "from_utc": cfg.from_dt.astimezone(timezone.utc).isoformat(), "to_utc": cfg.to_dt.astimezone(timezone.utc).isoformat(), "horizon_days": cfg.horizon_days},
         "sources": [str(x) for x in sources],
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "summary": {"total_events": len(events)+len(discarded), "observable_events": len(events), "recommended_events": sum(1 for x in events if x["recommendation"]=="recommended"), "best_event": best.get("object_name") if best else None, "operational_priority": "high" if best and best["score_total"] >= 8 else "medium" if best and best["score_total"] >= 5 else "low"},
+        "summary": {"total_events": window_events, "observable_events": len(events), "recommended_events": sum(1 for x in events if x["recommendation"]=="recommended"), "best_event": best.get("object_name") if best else None, "operational_priority": "high" if best and best["score_total"] >= 8 else "medium" if best and best["score_total"] >= 5 else "low"},
         "events": events,
         "discarded": discarded,
     }

@@ -69,7 +69,7 @@ python tools/build_sabadell_final_report.py \
 
 ## Flujo lunar
 
-Las ocultaciones lunares se calculan en una capa paralela. El raw estelar sale de Gaia DR3 por TAP para un corredor alrededor de la trayectoria lunar topocentrica; despues Astropy calcula cruces entre esas estrellas y un limbo lunar esferico visto desde el observatorio.
+Las ocultaciones lunares se calculan en una capa paralela. `tools/run_lunar_occultations.py` solo hace calculo geométrico sobre un CSV local ya existente (sin depender de TAP/VizieR en runtime).
 
 ```bash
 python tools/download_lunar_sources.py \
@@ -85,6 +85,12 @@ python tools/run_lunar_occultations.py \
   --input data/raw/lunar/gaia-sabadell-2026-05-24_2026-05-25.csv \
   --out reports/sabadell-lunar-2026-05-24_2026-05-25
 ```
+
+Tambien puedes usar un catalogo brillante local determinista en `data/raw/lunar/bright-stars.csv` (ignorado por Git), con columnas obligatorias:
+
+`star_name,catalog,source_id,ra_deg,dec_deg,pmra,pmdec,epoch,mag_v,mag_g`
+
+El runner valida columnas, rango RA/Dec y que exista cobertura brillante (`mag_v <= 8`) antes de calcular eventos.
 
 Adjunta el JSON lunar al informe final. La seccion lunar existe siempre; sin `--lunar-json` queda marcada como no calculada.
 

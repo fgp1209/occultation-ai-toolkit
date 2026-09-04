@@ -1,137 +1,67 @@
-# Occultation Skill (local)
+# Occultation AI Toolkit
 
-Herramienta local para convertir raw reales de ocultaciones en informes para Sabadell.
+**V0.1-alpha** — paquete de contexto multiplataforma para ocultaciones estelares.
 
-## Instalacion
+Sirve para poner a ChatGPT, Claude, Gemini o un agente compatible al día en dos tareas:
 
-```bash
-python -m venv .venv
-pip install -r requirements.txt
-```
+- seleccionar y preparar observaciones;
+- reducir una captura con PyMovie/AOTA y preparar o auditar el paquete para SODIS.
 
-## Flujo real
+No envía informes ni sustituye la revisión científica humana.
 
-1. Descarga o copia raw reales en `data/raw/`.
+## Uso inmediato
 
-```bash
-python tools/download_real_sources.py \
-  --from "2026-05-18T00:00:00+02:00" \
-  --to "2026-06-17T23:59:59+02:00" \
-  --out data/raw/real_occultations_2026-05-18_2026-06-17.csv \
-  --download-preston-zips
-```
+Pasa esta URL a la IA:
 
-2. Normaliza HTML, CSV y XML compatibles a CSV interno.
+`https://github.com/fgp1209/occultation-ai-toolkit`
 
-```bash
-python tools/normalize_raw_sources.py \
-  --raw-dir data/raw \
-  --from "2026-05-18T00:00:00+02:00" \
-  --to "2026-06-17T23:59:59+02:00" \
-  --timezone Europe/Madrid \
-  --out data/cache/normalized_sabadell_2026-05-18_2026-06-17.csv
-```
+Y escribe:
 
-El normalizador escribe tambien un `*.diagnostic.json` con conteos por fichero, descartes y campos no mapeados. La cache depende de `raw_dir`, hashes de raws, ventana, zona horaria y version del parser.
+> Lee `AI_START_HERE.md` y sigue sus instrucciones. Después te pasaré los archivos del evento.
 
-3. Ejecuta el scorer para la semana y el horizonte 30 dias.
+La IA debe cargar solo los documentos correspondientes a la tarea y pedir únicamente los datos que puedan cambiar el resultado.
 
-```bash
-python occultations/run.py \
-  --name "Observatori de Sabadell" \
-  --lat 41.548 --lon 2.107 --alt 220 \
-  --timezone Europe/Madrid \
-  --from "2026-05-18T00:00:00+02:00" \
-  --to "2026-05-24T23:59:59+02:00" \
-  --input data/cache/normalized_sabadell_2026-05-18_2026-06-17.csv \
-  --out reports/sabadell-week-2026-05-18_2026-05-24
-```
+## Perfil base y perfiles privados
 
-```bash
-python occultations/run.py \
-  --name "Observatori de Sabadell" \
-  --lat 41.548 --lon 2.107 --alt 220 \
-  --timezone Europe/Madrid \
-  --from "2026-05-18T00:00:00+02:00" \
-  --to "2026-06-17T23:59:59+02:00" \
-  --input data/cache/normalized_sabadell_2026-05-18_2026-06-17.csv \
-  --out reports/sabadell-30d-2026-05-18_2026-06-17
-```
+El perfil público de referencia es el **Observatori de Sabadell**. Sus coordenadas son operativas para radar, no deben copiarse a un reporte SODIS sin confirmar la estación real de observación.
 
-4. Revisa el informe editorial final.
+Para otra estación o equipo existen cuatro opciones:
 
-```bash
-python tools/build_sabadell_final_report.py \
-  --week-json reports/sabadell-week-2026-05-18_2026-05-24.json \
-  --horizon-json reports/sabadell-30d-2026-05-18_2026-06-17.json \
-  --out reports/sabadell-final-2026-05-18_2026-05-24.md
-```
+1. Crear `profiles/local.md` dentro de la carpeta local del proyecto en ChatGPT Work.
+2. Copiar `profiles/PROFILE_TEMPLATE.md`, completarlo y adjuntarlo al chat cuando sea necesario.
+3. Subir el perfil como archivo de conocimiento de un GPT/Gem/Project personalizado.
+4. Guardar los datos estables en las instrucciones o memoria de ese asistente.
 
-## Flujo lunar
+Un perfil proporcionado por el usuario prevalece sobre el perfil base. Los datos científicos del evento nunca se recuperan de memoria si existen archivos originales.
 
-Las ocultaciones lunares se calculan en una capa paralela. `tools/run_lunar_occultations.py` solo hace calculo geométrico sobre un CSV local ya existente (sin depender de TAP/VizieR en runtime).
+## GPT personalizado
 
-```bash
-python tools/download_lunar_sources.py \
-  --from "2026-05-24T21:00:00+02:00" \
-  --to "2026-05-25T07:00:00+02:00" \
-  --out data/raw/lunar/gaia-sabadell-2026-05-24_2026-05-25.csv
-```
+Sube estos archivos como conocimiento:
 
-```bash
-python tools/run_lunar_occultations.py \
-  --from "2026-05-24T21:00:00+02:00" \
-  --to "2026-05-25T07:00:00+02:00" \
-  --input data/raw/lunar/gaia-sabadell-2026-05-24_2026-05-25.csv \
-  --out reports/sabadell-lunar-2026-05-24_2026-05-25
-```
+- `AI_START_HERE.md`
+- `skills/occultation-assistant/SKILL.md`
+- todos los archivos de `skills/occultation-assistant/references/`
+- `profiles/observatori-sabadell.md` o el perfil privado correspondiente
 
-Tambien puedes usar un catalogo brillante local determinista en `data/raw/lunar/bright-stars.csv` (ignorado por Git), con columnas obligatorias:
+Usa como instrucciones el contenido de `CUSTOM_GPT_INSTRUCTIONS.md`.
 
-`star_name,catalog,source_id,ra_deg,dec_deg,pmra,pmdec,epoch,mag_v,mag_g`
+## Estado alfa
 
-El runner valida columnas, rango RA/Dec y que exista cobertura brillante (`mag_v <= 8`) antes de calcular eventos.
+Incluido:
 
-Adjunta el JSON lunar al informe final. La seccion lunar existe siempre; sin `--lunar-json` queda marcada como no calculada.
+- radar y selección operativa;
+- inventario mínimo de datos;
+- flujo SER → PyMovie → AOTA → borrador/paquete SODIS;
+- auditoría de coherencia y trazabilidad;
+- método causal para aprender software astronómico.
 
-```bash
-python tools/build_sabadell_final_report.py \
-  --week-json reports/sabadell-window-2026-05-24_2026-05-25.json \
-  --horizon-json reports/sabadell-30d-2026-05-18_2026-06-17.json \
-  --lunar-json reports/sabadell-lunar-2026-05-24_2026-05-25.json \
-  --out reports/sabadell-final-2026-05-24_2026-05-25.md
-```
+Fuera de alcance en V0.1:
 
-Si no existe `settings.local.json`, el primer arranque pide el observatorio base y propone el Observatori de Sabadell. El fichero queda local e ignorado por Git. Puedes sobreescribir el sitio desde CLI con `--name`, `--lat`, `--lon`, `--alt` y `--timezone`.
+- envío automático a SODIS;
+- garantía de geometría local sin `Event.html` o circunstancias locales;
+- automatización madura de Tangra/PyOTE;
+- publicación de manuales de terceros.
 
-Carpetas y settings locales ignorados: `data/raw/`, `data/cache/`, `reports/`, `settings.local.json`.
+## Licencia y fuentes
 
-## Limitaciones
-
-- No sustituye OccultWatcher.
-- La geometria local exacta requiere validacion externa y bloquea recomendaciones operativas.
-- El parser XML conserva los campos raw no mapeados en `extra`; no asigna duracion maxima o incertidumbre desde slots Preston no documentados.
-- La duracion maxima de una fuente no equivale a duracion local.
-- El calculo lunar actual usa Gaia DR3, la efemeride builtin de Astropy y un limbo lunar esferico; sirve para descubrimiento local y practica/timing, no sustituye una reduccion lunar de precision con perfil de limbo.
-
-## Regla operativa para eventos futuros (doble validacion obligatoria)
-
-Para cualquier solicitud de eventos futuros por ubicacion+ventana temporal:
-
-1. **Validacion interna (pipeline local)**:
-   - ejecutar/regenrar normalizado asteroidal si hace falta;
-   - ejecutar `occultations/run.py` para asteroides;
-   - ejecutar `tools/run_lunar_occultations.py` para lunares con catalogo local validado;
-   - separar salidas: lunar / asteroidal / practica / descartes / pendientes.
-
-2. **Validacion externa independiente (web)**:
-   - contrastar con fuentes astronomicas fiables (IOTA, Call4Obs, Preston, Lucky Star, etc.);
-   - registrar enlaces usados y alcance (local/regional/global);
-   - detectar divergencias entre pipeline y fuentes publicadas.
-
-3. **Matriz obligatoria en informe final**:
-   - `Evento | Fuente externa | Pipeline local | Diagnostico | Fiabilidad`
-
-4. **Cierre**:
-   - no cerrar como “OK” si una fuente externa fiable publica un evento relevante que el pipeline no detecta;
-   - diagnosticar causa (catalogo, parser, geometria, zona horaria, topocentria, cobertura raw/fuentes).
+El repositorio contiene conocimiento operativo sintetizado. Los manuales oficiales de PyMovie, Occult/AOTA, SharpCap y SODIS deben obtenerse de sus distribuidores o comunidades correspondientes. La documentación oficial vigente prevalece cuando cambien interfaces, formatos o reglas de reporte.

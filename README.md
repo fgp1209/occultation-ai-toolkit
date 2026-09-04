@@ -1,6 +1,6 @@
 # Occultation AI Toolkit
 
-**V0.1-alpha** — paquete de contexto multiplataforma para ocultaciones estelares.
+**V0.2-alpha** — paquete de contexto multiplataforma para ocultaciones estelares.
 
 Sirve para poner a ChatGPT, Claude, Gemini o un agente compatible al día en dos tareas:
 
@@ -21,16 +21,18 @@ Y escribe:
 
 La IA debe cargar solo los documentos correspondientes a la tarea y pedir únicamente los datos que puedan cambiar el resultado.
 
+En el primer uso ejecutará un onboarding breve para identificar estación, equipo, timing y forma de persistir el perfil. No debe volver a pedir datos ya guardados y confirmados.
+
 ## Perfil base y perfiles privados
 
 El perfil público de referencia es el **Observatori de Sabadell**. Sus coordenadas son operativas para radar, no deben copiarse a un reporte SODIS sin confirmar la estación real de observación.
 
 Para otra estación o equipo existen cuatro opciones:
 
-1. Crear `profiles/local.md` dentro de la carpeta local del proyecto en ChatGPT Work.
-2. Copiar `profiles/PROFILE_TEMPLATE.md`, completarlo y adjuntarlo al chat cuando sea necesario.
-3. Subir el perfil como archivo de conocimiento de un GPT/Gem/Project personalizado.
-4. Guardar los datos estables en las instrucciones o memoria de ese asistente.
+1. En ChatGPT Work/Codex o un proyecto con archivos editables: crear `profiles/local.md`, ignorado por Git.
+2. En un GPT, Gem, Claude Project o equivalente: generar `observer-profile.md` para descargarlo y subirlo a los archivos del asistente.
+3. En un chat normal con memoria: guardar únicamente datos estables después de obtener autorización explícita.
+4. Sin persistencia: entregar el perfil como archivo para adjuntarlo en futuras sesiones.
 
 Un perfil proporcionado por el usuario prevalece sobre el perfil base. Los datos científicos del evento nunca se recuperan de memoria si existen archivos originales.
 
@@ -45,6 +47,10 @@ Sube estos archivos como conocimiento:
 
 Usa como instrucciones el contenido de `CUSTOM_GPT_INSTRUCTIONS.md`.
 
+## Corpus
+
+`knowledge/` contiene conocimiento científico original y destilado. No reproduce los manuales empleados como fuentes. La skill carga módulos diferentes para RADAR, REPORT, AUDIT y LEARN.
+
 ## Estado alfa
 
 Incluido:
@@ -54,8 +60,10 @@ Incluido:
 - flujo SER → PyMovie → AOTA → borrador/paquete SODIS;
 - auditoría de coherencia y trazabilidad;
 - método causal para aprender software astronómico.
+- onboarding y perfil persistente según plataforma;
+- corpus mínimo de tiempo, campo, fotometría, detectabilidad, D/R y reporte.
 
-Fuera de alcance en V0.1:
+Fuera de alcance en V0.2:
 
 - envío automático a SODIS;
 - garantía de geometría local sin `Event.html` o circunstancias locales;
@@ -64,4 +72,4 @@ Fuera de alcance en V0.1:
 
 ## Licencia y fuentes
 
-El repositorio contiene conocimiento operativo sintetizado. Los manuales oficiales de PyMovie, Occult/AOTA, SharpCap y SODIS deben obtenerse de sus distribuidores o comunidades correspondientes. La documentación oficial vigente prevalece cuando cambien interfaces, formatos o reglas de reporte.
+El contenido original se publica bajo CC BY 4.0; consulta `LICENSE`. Los manuales oficiales de PyMovie, Occult/AOTA, SharpCap y SODIS deben obtenerse de sus distribuidores o comunidades correspondientes. La documentación oficial vigente prevalece cuando cambien interfaces, formatos o reglas de reporte.

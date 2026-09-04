@@ -1,0 +1,8 @@
+profiles/local.md
+profiles/private-*.md
+events/
+*.ser
+*.avi
+*.fits
+*.fit
+

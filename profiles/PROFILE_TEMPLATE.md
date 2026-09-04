@@ -1,6 +1,6 @@
 # Perfil local del observador
 
-Guarda una copia completada como `profiles/local.md` en el proyecto local o adjúntala al chat. También puede incorporarse a las instrucciones o memoria de un asistente personalizado.
+Guarda una copia completada como `profiles/local.md` en un proyecto editable. Para GPT/Gem/Project, descarga la copia como `observer-profile.md` y súbela a sus archivos. En un chat con memoria, guarda datos estables solo tras autorización explícita.
 
 ```yaml
 site:
@@ -23,6 +23,7 @@ equipment:
   acquisition_software:
   timing_source:
   timestamp_reference:
+  timing_characterization_status:
 
 validated_limits:
   comfortable_combined_mag:
@@ -36,6 +37,14 @@ operations:
   sleep_cost:
   setup_minutes:
   notes:
+
+profile_metadata:
+  created_at:
+  last_confirmed_at:
+  source: user_confirmed
+  persistence:
 ```
 
 No incluyas contraseñas, tokens, direcciones privadas ni otros secretos.
+
+Las coordenadas aproximadas bastan para radar. Las coordenadas exactas del trípode para reporte deben mantenerse separadas cuando revelen una ubicación privada.

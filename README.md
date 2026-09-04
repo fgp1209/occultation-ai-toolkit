@@ -73,6 +73,38 @@ Fuera de alcance en V0.2:
 - automatización madura de Tangra/PyOTE;
 - publicación de manuales de terceros.
 
+## Futuras ideas — V0.3+
+
+La V0.2 es deliberadamente un copiloto documental. Una futura capa ejecutable podría automatizar comprobaciones mecánicas sin sustituir la interpretación científica.
+
+Prioridad previa: probar la skill con 3–5 expedientes reales anonimizados y convertir los fallos observados en casos de prueba.
+
+CLI opcional:
+
+```text
+occultctl inspect <carpeta>
+occultctl timing-audit <csv|ser>
+occultctl validate <carpeta>
+occultctl draft <carpeta>
+```
+
+Capacidades posibles:
+
+- inventario y hashes de una carpeta de evento;
+- parsers para `CameraSettings.txt`, CSV de PyMovie, AOTA Report y `.dat`;
+- detección de timestamps no monotónicos, gaps y dropped frames;
+- validación determinista de UTC, estación, exposición, binning, D/R y duración;
+- generación de `manifest.yaml`, `timing-audit.csv`, `traceability.md`, `warnings.md` y `report-draft.md`;
+- fixtures anonimizados, pruebas automáticas e integración opcional desde la skill;
+- más adelante, radar asistido mediante predicciones y meteorología actuales.
+
+Límites permanentes:
+
+- no automatizar la clasificación científica final;
+- no enviar automáticamente a SODIS;
+- no controlar interfaces gráficas de PyMovie/AOTA como requisito del toolkit;
+- no modificar los archivos originales.
+
 ## Licencia y fuentes
 
 El contenido original se publica bajo CC BY 4.0; consulta `LICENSE`. Los manuales oficiales de PyMovie, Occult/AOTA, SharpCap y SODIS deben obtenerse de sus distribuidores o comunidades correspondientes. La documentación oficial vigente prevalece cuando cambien interfaces, formatos o reglas de reporte.

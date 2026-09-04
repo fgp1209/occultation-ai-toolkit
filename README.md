@@ -49,7 +49,7 @@ Usa como instrucciones el contenido de `CUSTOM_GPT_INSTRUCTIONS.md`.
 
 ## Corpus
 
-`knowledge/` contiene conocimiento científico original y destilado. No reproduce los manuales empleados como fuentes. La skill carga módulos diferentes para RADAR, REPORT, AUDIT y LEARN.
+`knowledge/` contiene conocimiento científico original y destilado.
 
 ## Estado alfa
 
@@ -66,12 +66,12 @@ Incluido:
 - diagnóstico de eventos marginales, dobles, caídas secundarias y geometrías rasantes;
 - archivo reproducible y reanálisis posterior.
 
-Fuera de alcance en V0.2:
+Fuera de alcance, quizás en futuras versiones:
 
 - envío automático a SODIS;
 - garantía de geometría local sin `Event.html` o circunstancias locales;
-- automatización madura de Tangra/PyOTE;
-- publicación de manuales de terceros.
+- automatización de Tangra/PyOTE;
+- Control del telescopio a través de Cartes du Ciel.
 
 ## Licencia y fuentes
 

@@ -2,6 +2,8 @@
 
 Pide únicamente información capaz de cambiar la decisión o el reporte. Antes de pedirla, comprueba si ya aparece en los archivos aportados.
 
+Cuando el dato dependa de una fuente externa, seguir [manual-data-acquisition.md](manual-data-acquisition.md): indicar el bloqueo, la URL directa, los valores concretos que debe introducir el usuario y el archivo/captura/columnas exactos que debe devolver. No usar peticiones genéricas ni solicitar material de candidatos ya descartados.
+
 ## Radar
 
 - Perfil: estación aproximada, zona horaria, equipo, horizonte y límites validados.

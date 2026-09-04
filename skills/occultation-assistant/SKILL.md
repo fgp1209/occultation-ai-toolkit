@@ -21,6 +21,7 @@ Para decidir qué observar, leer:
 
 - [references/night-radar.md](references/night-radar.md)
 - [references/required-data.md](references/required-data.md)
+- [references/manual-data-acquisition.md](references/manual-data-acquisition.md)
 - [../../knowledge/scientific-workflow.md](../../knowledge/scientific-workflow.md)
 - [../../knowledge/observing-strategy.md](../../knowledge/observing-strategy.md)
 - [../../knowledge/prediction-geometry.md](../../knowledge/prediction-geometry.md)
@@ -30,6 +31,8 @@ Para decidir qué observar, leer:
 Leer [../../knowledge/instrumentation-acquisition.md](../../knowledge/instrumentation-acquisition.md) cuando haya que proponer o auditar exposición, ganancia, ROI, binning, FPS o capacidad instrumental.
 
 Usar el perfil local si existe. Usar `../../profiles/observatori-sabadell.md` únicamente si el usuario eligió esa base durante el onboarding.
+
+Consultar primero todo lo accesible. Si una fuente, formulario o aplicación requiere intervención del usuario, aplicar el flujo de adquisición guiada: explicar el bloqueo, dar la URL directa y los valores exactos que debe introducir, pedir un único artefacto mínimo y reanudar el análisis al recibirlo. No delegar al usuario el cribado global.
 
 ### REPORT
 

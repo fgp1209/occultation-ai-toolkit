@@ -9,9 +9,9 @@ Trabaja como sistema de apoyo científico, no como autoridad ni mecanismo de env
 
 Para reglas actuales de software, formatos o comunidad, leer [../../knowledge/sources.md](../../knowledge/sources.md) y contrastar la documentación oficial vigente. Leer [../../knowledge/glossary.md](../../knowledge/glossary.md) solo cuando exista ambigüedad terminológica.
 
-## Onboarding obligatorio
+## Onboarding condicionado
 
-Antes de RADAR, REPORT, AUDIT o LEARN, comprobar si existe un perfil confirmado. Si no existe, leer [references/onboarding.md](references/onboarding.md) y completarlo. No repetir el onboarding cuando el perfil ya cubra los datos necesarios; pedir solo el campo ausente que cambie la tarea.
+Antes de trabajar, decidir si la petición depende de estación, equipo, timing o preferencias locales. Si depende de ellos y no existe un perfil suficiente y confirmado, leer [references/onboarding.md](references/onboarding.md) y completarlo. Una consulta conceptual o documental que no dependa del observador no requiere onboarding. No repetirlo cuando el perfil ya cubra la tarea; pedir solo el campo ausente que pueda cambiar el resultado.
 
 ## Elegir modo
 
@@ -22,8 +22,12 @@ Para decidir qué observar, leer:
 - [references/night-radar.md](references/night-radar.md)
 - [references/required-data.md](references/required-data.md)
 - [../../knowledge/scientific-workflow.md](../../knowledge/scientific-workflow.md)
+- [../../knowledge/observing-strategy.md](../../knowledge/observing-strategy.md)
+- [../../knowledge/prediction-geometry.md](../../knowledge/prediction-geometry.md)
 - [../../knowledge/detectability-classification.md](../../knowledge/detectability-classification.md)
 - [../../knowledge/field-validation.md](../../knowledge/field-validation.md)
+
+Leer [../../knowledge/instrumentation-acquisition.md](../../knowledge/instrumentation-acquisition.md) cuando haya que proponer o auditar exposición, ganancia, ROI, binning, FPS o capacidad instrumental.
 
 Usar el perfil local si existe. Usar `../../profiles/observatori-sabadell.md` únicamente si el usuario eligió esa base durante el onboarding.
 
@@ -35,9 +39,12 @@ Para convertir archivos del evento en borrador y paquete SODIS, leer:
 - [references/report-validation.md](references/report-validation.md)
 - [references/required-data.md](references/required-data.md)
 - [../../knowledge/timing.md](../../knowledge/timing.md)
+- [../../knowledge/instrumentation-acquisition.md](../../knowledge/instrumentation-acquisition.md)
 - [../../knowledge/photometry.md](../../knowledge/photometry.md)
 - [../../knowledge/event-analysis.md](../../knowledge/event-analysis.md)
 - [../../knowledge/reporting.md](../../knowledge/reporting.md)
+
+Leer [../../knowledge/special-signatures.md](../../knowledge/special-signatures.md) solo si aparecen uno o pocos puntos, una profundidad anómala, varios escalones, una caída secundaria o una geometría rasante.
 
 Primero inventariar los archivos disponibles. Extraer valores directamente cuando el formato sea legible; usar capturas como evidencia secundaria. No exigir que el usuario transcriba información ya contenida en un archivo.
 
@@ -48,8 +55,11 @@ Para revisar un reporte ya preparado, leer:
 - [references/report-validation.md](references/report-validation.md)
 - [references/pymovie-aota-sodis.md](references/pymovie-aota-sodis.md)
 - [../../knowledge/timing.md](../../knowledge/timing.md)
+- [../../knowledge/instrumentation-acquisition.md](../../knowledge/instrumentation-acquisition.md)
 - [../../knowledge/detectability-classification.md](../../knowledge/detectability-classification.md)
 - [../../knowledge/reporting.md](../../knowledge/reporting.md)
+
+Leer [../../knowledge/special-signatures.md](../../knowledge/special-signatures.md) cuando el resultado sea marginal o presente una firma no compatible con un único escalón.
 
 Emitir errores, contradicciones, ausencias y advertencias. No reescribir silenciosamente datos científicos.
 

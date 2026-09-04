@@ -20,7 +20,10 @@ Entregar cuatro bloques:
 - Herramienta declarada coincide con los productos.
 - Timestamps monotónicos; discontinuidades y dropped frames revisados cerca de D/R.
 - Incertidumbres presentes y compatibles con cadencia/modelo.
+- Modelo de ruido compatible con la estructura temporal observada cuando el resultado sea marginal.
 - La caída del target no se reproduce en comparaciones o fondo.
+- Apertura/tracking permanecen definidos durante una desaparición profunda.
+- Filtros o procesamiento temporal identificados y evaluados.
 - El archivo original permanece intacto.
 
 ## Clasificación
@@ -30,6 +33,8 @@ Entregar cuatro bloques:
 - `NO CONCLUYENTE`: evidencia insuficiente o fallo capaz de ocultar/simular el evento.
 
 Una curva plana no prueba una negativa. Un evento de una o pocas muestras exige tratamiento explícito y no debe sobreinterpretarse.
+
+Una firma secundaria o profundidad anómala debe describirse primero como observación. `Compatible con`, `candidato` y `confirmado` representan niveles distintos; revisar hipótesis instrumentales, doble estrella, graze, satélite u otra física sin elegir por interés.
 
 ## Política de corrección
 

@@ -21,7 +21,7 @@ Y escribe:
 
 La IA debe cargar solo los documentos correspondientes a la tarea y pedir únicamente los datos que puedan cambiar el resultado.
 
-En el primer uso ejecutará un onboarding breve para identificar estación, equipo, timing y forma de persistir el perfil. No debe volver a pedir datos ya guardados y confirmados.
+Cuando la tarea dependa del observador y falte un perfil, ejecutará un onboarding breve para identificar estación, equipo, timing y forma de persistirlo. Una consulta conceptual no requiere perfil. No debe volver a pedir datos ya guardados y confirmados.
 
 ## Perfil base y perfiles privados
 
@@ -59,9 +59,12 @@ Incluido:
 - inventario mínimo de datos;
 - flujo SER → PyMovie → AOTA → borrador/paquete SODIS;
 - auditoría de coherencia y trazabilidad;
-- método causal para aprender software astronómico.
+- método causal para aprender software astronómico;
 - onboarding y perfil persistente según plataforma;
-- corpus mínimo de tiempo, campo, fotometría, detectabilidad, D/R y reporte.
+- corpus modular de tiempo, campo, fotometría, detectabilidad, D/R y reporte;
+- predicción/astrometría, adquisición instrumental y estrategia de observación;
+- diagnóstico de eventos marginales, dobles, caídas secundarias y geometrías rasantes;
+- archivo reproducible y reanálisis posterior.
 
 Fuera de alcance en V0.2:
 

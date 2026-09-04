@@ -7,34 +7,85 @@ event:
   event_date_utc:
   prediction_source:
   prediction_version:
+  star_catalog:
+  star_solution_epoch:
+  expected_drop_mag:
+  expected_duration_s:
+  shadow_velocity_km_s:
+  local_geometry_source:
+  local_offset:
+  local_probability:
 
 station:
   name:
+  latitude_deg:
+  longitude_deg:
+  altitude_m:
+  datum:
   coordinates_source:
+  coordinates_method:
+  coordinates_precision:
   coordinates_status:
 
 capture:
   original_file:
   original_hash:
+  original_hash_algorithm:
   camera_settings_file:
   timing_log_file:
   start_utc:
   end_utc:
   exposure_s:
+  cadence_s:
+  fps_nominal:
+  fps_effective:
+  duty_cycle:
+  gain:
+  offset:
+  roi:
+  binning:
+  frames_integrated:
+  format:
   camera:
+  acquisition_software:
+  acquisition_software_version:
   timing_source:
   timestamp_reference:
+  timing_correction_s:
   dropped_frames_status:
+  maximum_gap_s:
+  frame_count:
+  timestamp_count:
+  sensor_temperature_c:
+  temporal_processing:
 
 field:
   target_confirmed_by:
   wcs_or_chart:
+  plate_solution_file:
+  orientation:
+  parity:
+  plate_scale_arcsec_px:
   comparison_stars:
+  background_regions:
+  tracking_method:
+  linearity_status:
 
 reduction:
   software_versions:
   lightcurve_file:
   analysis_report:
+  extraction_method:
+  aperture_or_mask:
+  background_method:
+  normalization:
+  excluded_frames:
+  excluded_frames_reason:
+  noise_model:
+  correlation_status:
+  transition_model:
+  confidence_interval:
+  false_positive_analysis:
   d_utc:
   d_uncertainty_s:
   r_utc:
@@ -44,12 +95,17 @@ reduction:
 classification:
   result:
   detectability_evidence:
+  controls_evidence:
+  alternative_hypotheses:
+  external_corroboration:
   limitations:
 
 report:
   draft_file:
   attachments:
+  provenance_table:
   review_status:
+  reviewer_notes:
 ```
 
 Los campos desconocidos quedan vacíos o marcados `AUSENTE`; nunca se completan desde otro evento.

@@ -26,6 +26,7 @@ Pide únicamente información capaz de cambiar la decisión o el reporte. Antes 
 - objetivo, comparaciones y fondo;
 - saturación/linealidad, SNR y estabilidad;
 - caída esperada frente al ruido y número de muestras.
+- en casos marginales: serie de baseline, fase subframe considerada, prueba de inyección/recuperación, criterio de falso positivo y estructura temporal del ruido.
 
 ## Reducción y reporte
 
@@ -36,6 +37,8 @@ Pide únicamente información capaz de cambiar la decisión o el reporte. Antes 
 - plantilla TXT/JOA/OccultWatcher si corresponde;
 - datos exactos de estación, observador e instrumento;
 - lista de archivos que se adjuntarán.
+- método de tracking, apertura/máscara, fondo, normalización, filtros, frames excluidos y motivo;
+- modelo de transición/ruido, intervalo de confianza y dependencia de corroboración externa cuando proceda.
 
 ## Regla de procedencia
 

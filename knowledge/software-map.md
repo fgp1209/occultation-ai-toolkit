@@ -16,4 +16,20 @@
 - PyOTE combina análisis temporal con funciones específicas como detectabilidad y falso positivo.
 - SODIS estructura el reporte europeo y su revisión; no reemplaza la reducción.
 
+## Funciones que no deben confundirse
+
+- **Extracción:** convierte píxeles en series de objetivo, comparaciones y fondo.
+- **Análisis temporal:** estima D/R e incertidumbres sobre una curva ya extraída.
+- **Falso positivo:** cuantifica si el ruido puede producir una excursión comparable.
+- **Detectabilidad:** prueba si una señal hipotética sería recuperable en ruido representativo.
+- **Reporte:** empaqueta resultados y evidencia para revisión.
+
+Una herramienta puede cubrir varias funciones, pero cada salida conserva los supuestos y sesgos de su entrada. AOTA no vuelve independiente una curva sesgada por Tangra; PyOTE no demuestra campo ni timing porque su estadística sea convincente.
+
+## Comparación de pipelines
+
+PyMovie/PyOTE y Tangra/AOTA pueden usarse como análisis de sensibilidad. Antes de comparar resultados, alinear target, frames, timestamps físicos, exposición, baseline y definición de normalización. La discrepancia es un diagnóstico, no una votación.
+
+Guardar proyectos o configuraciones nativas cuando permitan reproducir aperturas, tracking y exclusiones. Las interfaces y formatos concretos se verifican siempre contra la versión oficial vigente.
+
 Al enseñar cualquier herramienta usar: problema → entrada → algoritmo → supuestos → decisiones → salida → controles → fallos.

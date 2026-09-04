@@ -25,13 +25,12 @@
 
 Registrar versión y fecha de consulta cuando una regla o interfaz afecte al resultado.
 
-## Copyright
+## Política documental
 
-- No almacenar manuales, libros o transcripciones de terceros sin licencia o permiso expreso.
-- No reconstruir capítulos mediante paráfrasis demasiado cercana o exhaustiva.
-- Citar brevemente solo cuando sea necesario y atribuir la fuente.
-- Enlazar al distribuidor oficial para obtener el documento.
-- Separar claramente hechos técnicos, interpretación propia y experiencia local.
-- La licencia del repositorio cubre únicamente su contenido original.
+- No incorporar ni reconstruir manuales o transcripciones de terceros sin licencia o permiso.
+- Sintetizar únicamente principios que cambien una decisión, un control o una interpretación científica.
+- Enlazar la documentación oficial para interfaces, opciones y formatos vigentes.
+- Distinguir fuente técnica, síntesis del repositorio, inferencia y experiencia local.
+- La licencia del repositorio cubre solo su contenido original; los recursos enlazados conservan sus propios términos.
 
-El manual de observadores SODIS consultado declara uso interno de la comunidad y no autorización para publicación general; no debe copiarse ni incorporarse al paquete público.
+Los módulos de `knowledge/` son síntesis orientadas a ocultaciones. No sustituyen los manuales oficiales ni convierten una charla, ejemplo histórico o práctica local en una regla universal.

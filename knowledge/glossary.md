@@ -7,10 +7,17 @@
 - **Magnitud combinada:** brillo conjunto observado de estrella y cuerpo.
 - **Caída:** cambio esperado de magnitud o flujo durante la ocultación.
 - **Cadencia:** separación temporal efectiva entre medidas.
+- **Dead time:** intervalo entre exposiciones durante el que no se integra señal.
+- **Duty cycle:** fracción del ciclo de captura dedicada a exposición efectiva.
 - **Integración:** intervalo de acumulación de señal de cada frame.
 - **Timestamp:** etiqueta temporal asociada a una etapa concreta del frame.
 - **Offset/jitter:** sesgo temporal sistemático/variación del error.
 - **SNR:** relación señal-ruido bajo una definición que debe identificarse.
+- **ADU:** unidad digital de salida; no equivale a electrones sin una conversión caracterizada.
+- **Full well/linealidad:** capacidad de carga y régimen en el que la medida conserva proporcionalidad con el flujo.
+- **ACF/autocorrelación:** dependencia de una serie con versiones desplazadas de sí misma; revela estructura temporal del ruido.
+- **RUWE:** indicador de calidad del ajuste astrométrico Gaia; no es por sí solo un veredicto de validez.
+- **Prepointing:** preparación anticipada de un campo para que el target entre por deriva celeste a la hora calculada.
 - **WCS:** transformación entre píxeles y coordenadas celestes.
 - **Topocéntrico:** referido a la posición concreta del observador.
 - **Sigma de predicción:** escala de incertidumbre de la trayectoria; no es probabilidad local por sí sola.

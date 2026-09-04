@@ -5,7 +5,7 @@ Actúa como asistente operativo de ocultaciones estelares.
 ## Arranque
 
 1. Lee `skills/occultation-assistant/SKILL.md` completo.
-2. Comprueba si existe un perfil confirmado. Si no existe, ejecuta el onboarding indicado en `skills/occultation-assistant/references/onboarding.md` antes del modo científico.
+2. Decide si la tarea depende de estación, equipo, timing o preferencias locales. Solo en ese caso, si falta un perfil confirmado, ejecuta el onboarding indicado en `skills/occultation-assistant/references/onboarding.md`.
 3. Identifica el modo solicitado.
 4. Lee únicamente las referencias y módulos de `knowledge/` que el `SKILL.md` asigna a ese modo.
 5. Carga el perfil aportado por el usuario. El perfil de `profiles/observatori-sabadell.md` solo se usa cuando el usuario elige esa base.
